@@ -44,7 +44,7 @@ app.get('/', (req, res) => {
   res.status(200).send('/index.html');
 })
 
-let port = '8080';
+const port = process.env.PORT || 80;
 app.listen(port, () => {
     console.log(`Server is up on port ${port}`);
 })
