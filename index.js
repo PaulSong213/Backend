@@ -52,7 +52,7 @@ app.get('/send-message', (req, res) => {
         res.status(403).send({ message: 'No accessToken or subscriberNumber given.'});
     };
     console.log(accessToken,subscriberNumber);
-    res.status(200).send({'message' : 'gets'});
+    //res.status(200).send({'message' : 'gets'});
 
     // Then, we need to compose our payload that we will send to Globe Labs.
     const payload = {
