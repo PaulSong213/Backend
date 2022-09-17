@@ -18,29 +18,31 @@ app.get('/', (req, res) => {
     const code = req.query.code;
     if (!code) {
         res.status(403).send({ message: 'Invalid request.' });
-    };
-    // Construct our POST url.
-    const globe_labs_url = `https://developer.globelabs.com.ph/oauth/access_token?app_id=${APP_ID}&app_secret=${APP_SECRET}&code=${code}`;
+    } else {
+        // Construct our POST url.
+        const globe_labs_url = `https://developer.globelabs.com.ph/oauth/access_token?app_id=${APP_ID}&app_secret=${APP_SECRET}&code=${code}`;
 
-    // Send it to Globe Labs!
-    console.log(globe_labs_url);
-    axios.post(globe_labs_url, {})
-        .then((response) => {
-            const access_token = response.data.access_token;
-            const subscriber_number = response.data.subscriber_number;
+        // Send it to Globe Labs!
+        console.log(globe_labs_url);
+        axios.post(globe_labs_url, {})
+            .then((response) => {
+                const access_token = response.data.access_token;
+                const subscriber_number = response.data.subscriber_number;
 
-            // Store this to the database!
-            console.log(access_token, subscriber_number);
-            res.status(200).send({
-                accessToken: access_token,
-                subscriberNumber: subscriber_number
-            });
-        })
-        .catch((err) => {
-            // If there was an error, we should log it.
-            console.log(err);
-            res.status(500).send({ message: 'Internal Server Error' });
-        })
+                // Store this to the database!
+                console.log(access_token, subscriber_number);
+                res.status(200).send({
+                    accessToken: access_token,
+                    subscriberNumber: subscriber_number
+                });
+            })
+            .catch((err) => {
+                // If there was an error, we should log it.
+                console.log(err);
+                res.status(500).send({ message: 'Internal Server Error' });
+            })
+    }
+
 });
 
 app.get('/send-message', (req, res) => {
@@ -84,7 +86,7 @@ app.get('/send-message', (req, res) => {
 
 
 
-const port = process.env.PORT || 80;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server is up on port ${port}`);
 })
