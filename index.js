@@ -39,7 +39,7 @@ app.get('/', (req, res) => {
             .catch((err) => {
                 // If there was an error, we should log it.
                 console.log(err);
-                res.status(500).send({ message: 'Internal Server Error' });
+                res.status(500).send({ message: err });
             })
     }
 
@@ -52,36 +52,37 @@ app.get('/send-message', (req, res) => {
 
     if (!accessToken || !subscriberNumber) {
         res.status(403).send({ message: 'No accessToken or subscriberNumber given.' });
-    };
-    console.log(accessToken, subscriberNumber);
-    //res.status(200).send({'message' : 'gets'});
+    } else {
+        console.log(accessToken, subscriberNumber);
+        //res.status(200).send({'message' : 'gets'});
 
-    // Then, we need to compose our payload that we will send to Globe Labs.
-    const payload = {
-        outboundSMSMessageRequest: {
-            outboundSMSTextMessage: {
-                message: message
-            },
-            senderAddress: shortCodeLast4Digit,
-            address: `+63${subscriberNumber}`
+        // Then, we need to compose our payload that we will send to Globe Labs.
+        const payload = {
+            "outboundSMSMessageRequest": {
+                "outboundSMSTextMessage": {
+                    "message": message
+                },
+                "senderAddress": `${shortCodeLast4Digit}`,
+                "address": `${subscriberNumber}`
+            }
         }
+
+        // Compose our url
+        const url = `https://devapi.globelabs.com.ph/smsmessaging/v1/outbound/${shortCodeLast4Digit}/requests?access_token=${accessToken}`;
+
+        // Send the request via Axios.
+        axios.post(url, payload)
+            .then(() => {
+                // Success!
+                res.send(`Message sent!`);
+            })
+            .catch((err) => {
+                // If there was an error, we should log it.
+                console.error(err);
+                //res.sendStatus(500);
+                res.status(500).send({ message: err });
+            })
     }
-
-    // Compose our url
-    const url = `https://devapi.globelabs.com.ph/smsmessaging/v1/outbound/${shortCodeLast4Digit}/requests?access_token=${accessToken}`;
-
-    // Send the request via Axios.
-    axios.post(url, payload)
-        .then(() => {
-            // Success!
-            res.send(`Message sent!`);
-        })
-        .catch((err) => {
-            // If there was an error, we should log it.
-            console.error(err);
-            res.sendStatus(500);
-        })
-
 });
 
 
